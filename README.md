@@ -1,6 +1,6 @@
 # MPX Meter · Yps Broadcast
 
-**Monitorização e análise de emissões FM com RTL-SDR · v0.32**
+**Monitorização e análise de emissões FM com RTL-SDR**
 
 O MPX Meter reúne receção FM, análise do sinal composto MPX, descodificação RDS, escuta estéreo e registo de medições numa aplicação para Windows. Permite acompanhar a modulação, a potência MPX, o piloto estéreo, a banda RDS e os espectros RF/MPX.
 
@@ -281,7 +281,7 @@ A identificação **Yps Broadcast** não constitui assinatura digital Authentico
 
 # English — MPX Meter · Yps Broadcast
 
-**FM broadcast monitoring and analysis with RTL-SDR · v0.32**
+**FM broadcast monitoring and analysis with RTL-SDR**
 
 MPX Meter combines FM reception, composite MPX signal analysis, RDS decoding, stereo listening and measurement logging in a Windows application. It displays modulation, MPX power, the stereo pilot, the RDS band and RF/MPX spectra.
 
