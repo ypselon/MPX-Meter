@@ -219,3 +219,227 @@ No rodapé:
 A app destina-se à monitorização FM. Ruído, multipercurso, canais adjacentes, saturação e filtros podem afetar os resultados. O zoom dos gráficos não calibra o recetor e uma janela de 60 segundos completa não certifica conformidade da emissão.
 
 A identificação **Yps Broadcast** não constitui assinatura digital Authenticode. O pacote mínimo inclui os avisos e licenças no ficheiro **LICENSE**. Este repositório distribui o executável e documentação; o código-fonte da aplicação não está publicado aqui.
+
+---
+
+# English — MPX Meter · Yps Broadcast
+
+**FM broadcast monitoring and analysis with RTL-SDR — Windows x64 · v0.32**
+
+MPX Meter combines FM reception, composite MPX signal analysis, RDS decoding, stereo listening and measurement logging in a Windows application. It displays modulation, MPX power, the stereo pilot, the RDS band and RF/MPX spectra.
+
+The application runs locally without GNU Radio, Radioconda or Python. It is distributed as a portable folder: extract it and launch the executable. The .NET runtime described below is required. Receiving actual broadcasts also requires an RTL-SDR receiver with the appropriate USB driver.
+
+> This monitoring application is under development. Calculations have been tested with synthetic signals; accuracy during hardware reception still requires validation. Readings do not replace a calibrated modulation analyser.
+
+## Download
+
+Open [Release v0.32](https://github.com/ypselon/MPX-Meter/releases/tag/v0.32) and download **MPX-Meter-0.32-Minimal-Windows-x64.zip**.
+
+This repository is private: sign in with an account authorised to access it. GitHub's automatic “Source code” files are archives of the repository contents; to run the application, choose the **Minimal-Windows-x64** ZIP.
+
+## Requirements
+
+| Item | Requirement |
+| --- | --- |
+| Operating system | 64-bit Windows 10 or 11 |
+| Runtime | .NET 8 **Desktop Runtime**, Windows **x64** |
+| Radio reception | RTL-SDR USB; reference model: **RTL-SDR Blog V3** |
+| USB driver | **WinUSB** on the RTL-SDR's Interface 0 |
+| Antenna | An antenna suitable for the 87.5–108 MHz FM band |
+| Listening | An available Windows audio output |
+
+This distribution is neither a 32-bit version nor a Windows 7 build. Compatibility with other RTL-SDR models is not guaranteed in this version.
+
+**Without an RTL-SDR, you can explore the interface in Demo mode**, but cannot receive an actual station. Normal operation does not require an Internet connection; initial downloads do.
+
+## 1. Install the .NET Desktop Runtime
+
+1. Visit the [official .NET 8 download page](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
+2. Under **.NET Desktop Runtime**, select **Windows x64**.
+3. Install the runtime and reopen the application.
+
+The SDK is not required. The standard .NET Runtime intended for console applications does not replace the Desktop Runtime required by the Windows interface.
+
+## 2. Prepare the RTL-SDR using Zadig
+
+**Zadig is the installation tool; WinUSB is the driver used by the application.** If the RTL-SDR already works with WinUSB in another SDR program, this step may already be complete.
+
+1. Connect the RTL-SDR to a USB port and wait for Windows to detect it.
+2. Close SDR#, SDRangel and any other application that may be using the receiver.
+3. Download Zadig from its [official website](https://zadig.akeo.ie/) and run it as administrator.
+4. Enable **Options → List All Devices**.
+5. Select **the RTL-SDR, Interface 0**. It may appear as **Bulk-In, Interface (Interface 0)**, RTL2832U or another device name.
+6. Carefully verify the selected device. Do not select Interface 1 or peripherals such as your keyboard, mouse or sound card.
+7. Select **WinUSB** as the driver to install.
+8. Click **Install Driver** or **Replace Driver**, depending on the current configuration, and wait for completion.
+
+Zadig changes the driver of the selected device: correctly identifying the RTL-SDR is essential. Moving the receiver to another USB port may require checking the driver again.
+
+See also the [RTL-SDR manufacturer's guide](https://www.rtl-sdr.com/rtl-sdr-quick-start-guide/). MPX Meter does not install or change drivers automatically.
+
+## 3. Extract and launch the application
+
+Extract the ZIP to a folder where your user account has write permission. **Do not run the application from inside the ZIP.**
+
+Keep these five files together:
+
+| File | Purpose |
+| --- | --- |
+| `MPX-Meter.exe` | Application launcher |
+| `MpxMeter.Desktop.dll` | Application and signal processing |
+| `MpxMeter.Desktop.runtimeconfig.json` | .NET runtime configuration |
+| `rtlsdr.dll` | RTL-SDR communication |
+| `LICENSE` | Dependency licences and notices |
+
+Open **MPX-Meter.exe**. This is not a single-file executable: the DLLs and runtimeconfig file must remain in the same folder. There is no application installer; the runtime and USB driver are installed separately.
+
+## 4. First reception
+
+1. Connect the antenna to the RTL-SDR.
+2. Open **Settings** using the gear icon.
+3. Set **Source** to **RTL-SDR USB**.
+4. Click **Find USB** and select the receiver.
+5. Configure gain/AGC, PPM correction and the RF filter if needed.
+6. Select the audio output and click **Save and close**.
+7. Enter the station frequency in the main tuning field.
+8. Click **Start**.
+9. Allow time for RDS acquisition and for the **60-second** MPX power window to fill.
+
+RDS and short-term readings may appear before the 60 seconds have elapsed. The long-term power reading remains provisional until the window is complete.
+
+### Try it without a receiver
+
+Under **Settings → Source**, select **Demo**, save and click **Start**.
+
+The synthetic signal includes stereo FM and test RDS: PI **8201**, PS **MPX DEMO** and demonstration RadioText. These readings do not represent an over-the-air broadcast.
+
+## Tuning and reception controls
+
+- Frequency range: **87.50 to 108.00 MHz**, displayed with two decimal places.
+- **<< / >>:** tune down/up by 1 MHz.
+- **< / >:** tune down/up by 100 kHz.
+- The central field also accepts typed values, confirmed with Enter.
+- Tuning can change during reception. Changes are combined over a short delay before acquisition reopens with the new configuration.
+- Changing frequency or gain briefly interrupts audio and resets measurements, RDS and the 60-second window.
+- Stop reception before changing the source, device, PPM correction or filter.
+- The header indicator shows reception status without repeating the frequency.
+
+RF tuning is unavailable in Demo mode.
+
+## Receiver RDS panel
+
+The main panel shows the station name, RadioText and essential identification and signalling data.
+
+| Field | Meaning |
+| --- | --- |
+| **PI** | Programme Identification code in hexadecimal |
+| **PS** | RDS Programme Service name, up to 8 characters |
+| **RT / RadioText** | Text transmitted by the station, such as programme, artist or title |
+| **PTY / PTYN** | Programme type and programme type name, when transmitted |
+| **TP / TA** | Traffic programme service / traffic announcement |
+| **Music/Speech** | M/S signalling transmitted by the station |
+| **CT** | Date, time and local time offset information received through RDS |
+
+The **RDS** view also provides AF, DI, ECC, language, EON, ODA application identification and supported RT+ data when present in the broadcast. It includes synchronisation status, group counts and CRC errors. Details can be copied with Ctrl+C or the context menu.
+
+Available information depends on the station's transmission and reception quality. Empty or partial fields do not necessarily indicate a fault. PS and RT may require several valid groups to complete the text.
+
+### Reception meters
+
+- **Channel · dBFS:** average signal-plus-noise power after the RF filter.
+- **SNR · dB est.:** estimated signal-to-noise ratio. This is not audio SNR; adjacent stations and non-uniform noise can affect the result. The reading may be unavailable when reference bands are invalid or significant clipping occurs.
+- **I/Q total · dBFS:** overall captured energy before channel selection. Other stations within the capture can increase this value.
+
+Levels are relative to digital full scale and are not calibrated in dBm. There is no universal I/Q level that guarantees good reception.
+
+## MPX modulation and power
+
+MPX is the demodulated composite signal before de-emphasis and stereo decoding. It includes audio, the pilot and RDS.
+
+| Reading | What it displays |
+| --- | --- |
+| **MPX 60 s** | Moving average power over 60 seconds, in dBr |
+| **MPX 1 s** | One-second average power, updated after each complete second |
+| **+Mod / −Mod** | Positive and negative extremes within each 100 ms block, in kHz and percent |
+| **Peak** | Largest absolute value of either polarity over the last second |
+| **Pilot %** | Spectral level of the 19 kHz pilot, expressed as an equivalent percentage of ±75 kHz |
+| **RDS % eq.** | Energy from 54–60 kHz converted to an equivalent peak percentage |
+| **RMS** | RMS MPX deviation within a 100 ms block |
+| **Max + / −** | Extremes by polarity since the session started |
+| **RDS kHz RMS** | RMS level integrated over the 54–60 kHz band |
+
+**100% modulation corresponds to ±75 kHz.** The **0 dBr** power reference is a sine wave producing ±19 kHz peak deviation, equivalent to approximately **13.44 kHz RMS**. Power averages are calculated in linear units.
+
+RMS and 100 ms extremes are not 60-second averages. A high reading in a short block does not, by itself, determine the long-term window result.
+
+The equivalent RDS level includes noise and interference in that band; it is not the actual peak of the modulated RDS signal or an error rate. Pilot and RDS levels are spectral estimates.
+
+## Graphs
+
+- **RF spectrum:** I/Q capture displayed in dBFS per bin, with a tuned-channel marker. During actual reception, the frequency axis uses MHz; Demo uses offsets in kHz.
+- **MPX spectrum:** 0–60 kHz, with L+R, L−R, 19 kHz pilot and 57 kHz RDS references.
+- **MPX Multiplex:** time-domain composite waveform/envelope in 50 ms windows, with ±75 kHz references. Select it under **Settings → MPX graph**.
+- **MPX power:** 120 seconds of history showing 100 ms power and the 60-second moving average.
+- **Audio L/R:** RMS and peak meters for the left and right channels.
+
+In both RF and MPX spectra, **Min.** adjusts the lower display limit from **−120 to −40 dB**, in 10 dB steps. Limits are independent and saved. This changes only the visual scale; it does not increase gain or alter measurements.
+
+Graphs can receive up to 20 frames per second; actual smoothness depends on the computer and Windows.
+
+## Listen to the station
+
+1. Select the sound device under **Settings → Audio output**.
+2. Start reception.
+3. Enable **Listen** in the main bar and adjust the volume.
+4. Use **Mute** to stop listening without stopping measurements.
+
+Output can use the Windows default or a selected sound device. It can be changed while listening. Volume does not affect MPX power or the Windows master volume.
+
+Audio uses 48 kHz stereo with 50 µs de-emphasis. Stereo status depends on pilot synchronisation; without synchronisation, the application provides mono audio on both channels.
+
+## Settings, gain and saved configuration
+
+The gear icon provides source, USB device, audio output, gain/AGC mode, manual gain, PPM correction, RF filter, MPX view, language and automatic start settings.
+
+- **Gain:** Manual, Tuner AGC, RTL AGC or Both AGC. The supplied tuner's maximum manual gain is 49.6 dB; the application selects a value supported by the device.
+- **AGC:** adjusts gain automatically; it does not guarantee better SNR or provide additional RF gain above the manual maximum.
+- **RF filter:** 320 or 280 kHz. The narrower option may help with adjacent channels, but also changes the response to wide modulation.
+- **PPM:** corrects the receiver's frequency error.
+- **Language:** Portuguese (Portugal), the default, or English (International). Received station text retains its original content.
+- **Start reception on opening:** restores and starts the last saved source; disabled by default.
+
+Configuration is created in **settings.xml** beside the executable and saved when closing Settings or the application. It includes tuning, gain, audio, view, scales and preferences. The previous configuration is kept in **settings.xml.bak**.
+
+If the saved USB device is unavailable, the application waits for a new selection. When updating to another folder, copy the previous settings.xml to retain preferences. Do not share this file if you do not want to disclose your personal configuration.
+
+## CSV logging and diagnostics
+
+**Record CSV…** starts a measurement and RDS log, approximately one row per second. **Close CSV** stops logging. Demo mode is identified in the log. Logged short-term fields represent the selected measurement block, not every 100 ms block.
+
+The footer displays:
+
+- **I/Q:** overall digital level.
+- **Clipping:** percentage of I/Q pairs near ADC limits; 0% is possible and does not rule out analogue tuner overload.
+- **DSP:** processing time relative to signal duration; this is not overall CPU usage.
+- **Window:** progress towards the complete 60-second window.
+
+## Troubleshooting
+
+| Situation | What to check |
+| --- | --- |
+| Application does not open or requests .NET | Install .NET 8 Desktop Runtime **x64** and extract the entire ZIP |
+| RTL-SDR is not listed | USB connection, device selection, WinUSB on Interface 0 and **Find USB** |
+| USB busy / error when starting | Close other SDR programs using the receiver |
+| Weak or noisy signal | Antenna, cable, frequency and gain/AGC; maximum gain does not always give the best reception |
+| No sound | Reception started, **Listen** enabled, volume, selected sound device and Windows mixer |
+| Incomplete RDS | Wait for more groups, improve reception and confirm the station transmits RDS |
+| MPX remains provisional | Allow 60 seconds without restarting tuning/gain |
+| Readings differ from SDR# | Compare gain, AGCs, filters, FFT and references; dBFS/bin is not total power |
+| Preferences are not saved | Use a folder with write permission |
+
+## Scope and licences
+
+The application is intended for FM monitoring. Noise, multipath, adjacent channels, overload and filters can affect results. Graph zoom does not calibrate the receiver, and a complete 60-second window does not certify broadcast compliance.
+
+The **Yps Broadcast** name does not constitute an Authenticode digital signature. The minimal package includes notices and licences in **LICENSE**. This repository distributes the executable and documentation; the application's source code is not published here.
