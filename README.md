@@ -4,22 +4,31 @@
 
 O MPX Meter reúne receção FM, análise do sinal composto MPX, descodificação RDS, escuta estéreo e registo de medições numa aplicação para Windows. Permite acompanhar a modulação, a potência MPX, o piloto estéreo, a banda RDS e os espectros RF/MPX.
 
-A aplicação funciona localmente, sem GNU Radio, Radioconda ou Python. A distribuição é portátil: extrair a pasta e abrir o executável. Requer o runtime .NET indicado abaixo e, para receber emissões reais, um recetor RTL-SDR com controlador USB adequado.
+A aplicação funciona localmente, sem GNU Radio, Radioconda ou Python. A distribuição é portátil: extrair a pasta e abrir o executável. A versão **Standalone inclui o runtime .NET e não exige instalar o .NET no Windows**. A versão **Minimal** utiliza o runtime instalado. Para receber emissões reais, ambas requerem um recetor RTL-SDR com controlador USB adequado.
 
 > Versão de monitorização em desenvolvimento. Os cálculos foram ensaiados com sinais sintéticos; a precisão em receção física ainda requer validação. As leituras não substituem um analisador de modulação calibrado.
 
 ## Descarregar
 
-Abrir a [Release v0.32](https://github.com/ypselon/MPX-Meter/releases/tag/v0.32) e descarregar **MPX-Meter-0.32-Minimal-Windows-x64.zip**.
+Abrir a [Release v0.32](https://github.com/ypselon/MPX-Meter/releases/tag/v0.32) e escolher:
 
-O repositório é privado: é necessário iniciar sessão numa conta com acesso autorizado. Os ficheiros automáticos “Source code” do GitHub são arquivos do conteúdo do repositório; para executar a app, escolher o ZIP **Minimal-Windows-x64**.
+| Versão | .NET no computador | Pacote |
+| --- | --- | --- |
+| **Standalone** | **Não é necessário instalar .NET**; runtime incluído | [MPX-Meter-0.32-Standalone-Windows-x64.zip](https://github.com/ypselon/MPX-Meter/releases/download/v0.32/MPX-Meter-0.32-Standalone-Windows-x64.zip) · cerca de 67 MB |
+| **Minimal** | Requer .NET 8 Desktop Runtime x64 instalado | [MPX-Meter-0.32-Minimal-Windows-x64.zip](https://github.com/ypselon/MPX-Meter/releases/download/v0.32/MPX-Meter-0.32-Minimal-Windows-x64.zip) |
+
+**Standalone:** extrair para uma pasta e abrir **MPX-Meter-Teste.exe** (nome mantido da compilação testada). Manter juntos o EXE, `rtlsdr.dll` e `LICENSE`. O runtime está incluído no EXE; algumas bibliotecas são extraídas automaticamente para a pasta temporária do Windows no primeiro arranque.
+
+**A RTL-SDR e o controlador WinUSB, preparado com Zadig, continuam necessários para receção real nas duas versões.** Standalone não significa ausência de controlador USB.
+
+O repositório é público: os pacotes podem ser descarregados na página da Release. Os ficheiros automáticos “Source code” do GitHub são arquivos do conteúdo do repositório; para executar a app, escolher o ZIP **Standalone-Windows-x64** ou **Minimal-Windows-x64**.
 
 ## Requisitos
 
 | Elemento | Necessário |
 | --- | --- |
 | Sistema operativo | Windows 10 ou 11, de 64 bits |
-| Runtime | .NET 8 **Desktop Runtime**, Windows **x64** |
+| Runtime | **Standalone:** incluído, sem instalação de .NET. **Minimal:** .NET 8 Desktop Runtime x64 instalado |
 | Receção de rádio | RTL-SDR USB; modelo de referência: **RTL-SDR Blog V3** |
 | Controlador USB | **WinUSB** na Interface 0 da RTL-SDR |
 | Antena | Antena adequada à banda FM de 87,5–108 MHz |
@@ -29,7 +38,12 @@ Esta distribuição não é uma versão de 32 bits nem uma compilação para Win
 
 **Sem RTL-SDR é possível experimentar a interface em Demonstração**, mas não receber uma estação real. O funcionamento normal não exige ligação à Internet; os downloads iniciais exigem.
 
-## 1. Instalar o .NET Desktop Runtime
+## 1. Runtime .NET: escolher a distribuição
+
+**Standalone: saltar esta instalação.** O runtime .NET 8 e Windows Desktop Runtime estão incluídos. Não é necessário instalar o SDK nem o runtime no computador de utilização.
+
+**Apenas para a versão Minimal:**
+
 
 1. Aceder à [página oficial do .NET 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
 2. Na secção **.NET Desktop Runtime**, escolher **Windows x64**.
@@ -57,6 +71,12 @@ Consultar também o [guia do fabricante RTL-SDR](https://www.rtl-sdr.com/rtl-sdr
 ## 3. Extrair e abrir a aplicação
 
 Extrair o ZIP para uma pasta onde o utilizador tenha permissões de escrita. **Não executar diretamente dentro do ZIP.**
+
+### Standalone — três ficheiros
+
+Manter **MPX-Meter-Teste.exe**, **rtlsdr.dll** e **LICENSE** na mesma pasta e abrir **MPX-Meter-Teste.exe**. O ficheiro settings.xml é criado na utilização. Esta versão não necessita de .NET instalado. Não misturar ficheiros de distribuições diferentes.
+
+### Minimal — cinco ficheiros
 
 Manter estes cinco ficheiros juntos:
 
@@ -204,7 +224,7 @@ No rodapé:
 
 | Situação | Verificar |
 | --- | --- |
-| A aplicação não abre ou pede .NET | Instalar .NET 8 Desktop Runtime **x64** e extrair todo o ZIP |
+| A aplicação não abre ou pede .NET | Extrair todo o ZIP. **Minimal:** instalar .NET 8 Desktop Runtime x64. **Standalone:** confirmar que abriu MPX-Meter-Teste.exe do pacote Standalone |
 | RTL-SDR não aparece | Ligação USB, seleção do dispositivo, WinUSB na Interface 0 e **Procurar USB** |
 | USB ocupado / erro ao iniciar | Fechar outros programas SDR que utilizem o recetor |
 | Sinal fraco ou ruidoso | Antena, cabo, frequência e ganho/AGC; ganho máximo nem sempre dá a melhor receção |
@@ -228,22 +248,31 @@ A identificação **Yps Broadcast** não constitui assinatura digital Authentico
 
 MPX Meter combines FM reception, composite MPX signal analysis, RDS decoding, stereo listening and measurement logging in a Windows application. It displays modulation, MPX power, the stereo pilot, the RDS band and RF/MPX spectra.
 
-The application runs locally without GNU Radio, Radioconda or Python. It is distributed as a portable folder: extract it and launch the executable. The .NET runtime described below is required. Receiving actual broadcasts also requires an RTL-SDR receiver with the appropriate USB driver.
+The application runs locally without GNU Radio, Radioconda or Python. It is distributed as a portable folder: extract it and launch the executable. The **Standalone version includes the .NET runtime and does not require .NET to be installed on Windows**. The **Minimal** version uses an installed runtime. Both versions require an RTL-SDR receiver with the appropriate USB driver for actual broadcasts.
 
 > This monitoring application is under development. Calculations have been tested with synthetic signals; accuracy during hardware reception still requires validation. Readings do not replace a calibrated modulation analyser.
 
 ## Download
 
-Open [Release v0.32](https://github.com/ypselon/MPX-Meter/releases/tag/v0.32) and download **MPX-Meter-0.32-Minimal-Windows-x64.zip**.
+Open [Release v0.32](https://github.com/ypselon/MPX-Meter/releases/tag/v0.32) and choose:
 
-This repository is private: sign in with an account authorised to access it. GitHub's automatic “Source code” files are archives of the repository contents; to run the application, choose the **Minimal-Windows-x64** ZIP.
+| Version | .NET on the computer | Package |
+| --- | --- | --- |
+| **Standalone** | **No .NET installation required**; runtime included | [MPX-Meter-0.32-Standalone-Windows-x64.zip](https://github.com/ypselon/MPX-Meter/releases/download/v0.32/MPX-Meter-0.32-Standalone-Windows-x64.zip) · approximately 67 MB |
+| **Minimal** | Requires an installed .NET 8 Desktop Runtime x64 | [MPX-Meter-0.32-Minimal-Windows-x64.zip](https://github.com/ypselon/MPX-Meter/releases/download/v0.32/MPX-Meter-0.32-Minimal-Windows-x64.zip) |
+
+**Standalone:** extract to a folder and open **MPX-Meter-Teste.exe** (the name of the tested build is retained). Keep the EXE, `rtlsdr.dll` and `LICENSE` together. The runtime is included in the EXE; some libraries are automatically extracted to the Windows temporary folder on first launch.
+
+**Both versions still require an RTL-SDR and the WinUSB driver, prepared using Zadig, for actual reception.** Standalone does not remove the USB driver requirement.
+
+This repository is public: packages can be downloaded from the Release page. GitHub's automatic “Source code” files are archives of the repository contents; to run the application, choose the **Standalone-Windows-x64** or **Minimal-Windows-x64** ZIP.
 
 ## Requirements
 
 | Item | Requirement |
 | --- | --- |
 | Operating system | 64-bit Windows 10 or 11 |
-| Runtime | .NET 8 **Desktop Runtime**, Windows **x64** |
+| Runtime | **Standalone:** included, no .NET installation. **Minimal:** installed .NET 8 Desktop Runtime x64 |
 | Radio reception | RTL-SDR USB; reference model: **RTL-SDR Blog V3** |
 | USB driver | **WinUSB** on the RTL-SDR's Interface 0 |
 | Antenna | An antenna suitable for the 87.5–108 MHz FM band |
@@ -253,7 +282,12 @@ This distribution is neither a 32-bit version nor a Windows 7 build. Compatibili
 
 **Without an RTL-SDR, you can explore the interface in Demo mode**, but cannot receive an actual station. Normal operation does not require an Internet connection; initial downloads do.
 
-## 1. Install the .NET Desktop Runtime
+## 1. .NET runtime: choose your distribution
+
+**Standalone: skip this installation.** The .NET 8 and Windows Desktop runtimes are included. Neither the SDK nor the runtime needs to be installed on the computer running the application.
+
+**For the Minimal version only:**
+
 
 1. Visit the [official .NET 8 download page](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
 2. Under **.NET Desktop Runtime**, select **Windows x64**.
@@ -281,6 +315,12 @@ See also the [RTL-SDR manufacturer's guide](https://www.rtl-sdr.com/rtl-sdr-quic
 ## 3. Extract and launch the application
 
 Extract the ZIP to a folder where your user account has write permission. **Do not run the application from inside the ZIP.**
+
+### Standalone — three files
+
+Keep **MPX-Meter-Teste.exe**, **rtlsdr.dll** and **LICENSE** in the same folder and open **MPX-Meter-Teste.exe**. The settings.xml file is created during use. This version requires no .NET installation. Do not mix files from different distributions.
+
+### Minimal — five files
 
 Keep these five files together:
 
@@ -428,7 +468,7 @@ The footer displays:
 
 | Situation | What to check |
 | --- | --- |
-| Application does not open or requests .NET | Install .NET 8 Desktop Runtime **x64** and extract the entire ZIP |
+| Application does not open or requests .NET | Extract the entire ZIP. **Minimal:** install .NET 8 Desktop Runtime x64. **Standalone:** ensure you opened MPX-Meter-Teste.exe from the Standalone package |
 | RTL-SDR is not listed | USB connection, device selection, WinUSB on Interface 0 and **Find USB** |
 | USB busy / error when starting | Close other SDR programs using the receiver |
 | Weak or noisy signal | Antenna, cable, frequency and gain/AGC; maximum gain does not always give the best reception |
