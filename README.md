@@ -1,6 +1,6 @@
 # MPX Meter · Yps Broadcast
 
-**Monitorização e análise de emissões FM com RTL-SDR**
+**Monitorização e análise de emissões FM com RTL-SDR · v0.34**
 
 O MPX Meter reúne receção FM, análise do sinal composto MPX, descodificação RDS, escuta estéreo e registo de medições numa aplicação para Windows. Permite acompanhar a modulação, a potência MPX, o piloto estéreo, a banda RDS e os espectros RF/MPX.
 
@@ -12,7 +12,7 @@ A aplicação funciona localmente, sem GNU Radio, Radioconda ou Python. A distri
 
 A v0.34 reúne as funções desenvolvidas durante a etapa de testes v0.33 e a evolução posterior. O descritivo seguinte corresponde a funções já implementadas, não a uma lista de funcionalidades futuras.
 
-**Disponibilidade:** a v0.34 está preparada e validada localmente. Os pacotes públicos na secção Descarregar continuam a ser os da v0.32 até à publicação da nova release.
+**Disponibilidade:** a v0.34 está publicada nos pacotes **Standalone** e **Minimal**. Os links na secção Descarregar apontam para a nova release.
 
 ### Interface e organização
 
@@ -78,9 +78,9 @@ A v0.34 reúne as funções desenvolvidas durante a etapa de testes v0.33 e a ev
 
 **Validação local:** 866 verificações automáticas, revisão da interface PT/EN e ensaios dos dois executáveis com gravação/reprodução MPX. True Peak e LRA foram ensaiados com reproduções sintéticas dos sinais descritos nas normas; o conjunto original completo da EBU não foi ensaiado.
 
-## Imagens e manual da versão pública v0.32
+## Imagens de referência da v0.32 e guia de utilização
 
-As imagens e instruções seguintes acompanham a distribuição pública v0.32. A organização e as funções acrescentadas na v0.34 estão descritas acima.
+As imagens seguintes referem-se à v0.32. O guia de utilização foi atualizado para a distribuição v0.34; a nova organização e as funções acrescentadas estão descritas acima.
 
 
 Capturas da **v0.32 em modo Demonstração**, geradas pela própria aplicação. Os dados de estação e as medições mostrados são de um sinal sintético de teste, não de uma emissão recebida por antena. Os mesmos painéis estão disponíveis nas versões Standalone e Minimal.
@@ -120,14 +120,14 @@ Fonte, USB, saída de áudio, ganho/AGC, PPM, filtro RF, gráfico MPX, língua e
 
 ## Descarregar
 
-Abrir a [Release v0.32](https://github.com/ypselon/MPX-Meter/releases/tag/v0.32) e escolher:
+Abrir a [Release v0.34](https://github.com/ypselon/MPX-Meter/releases/tag/v0.34) e escolher:
 
 | Versão | .NET no computador | Pacote |
 | --- | --- | --- |
-| **Standalone** | **Não é necessário instalar .NET**; runtime incluído | [MPX-Meter-0.32-Standalone-Windows-x64.zip](https://github.com/ypselon/MPX-Meter/releases/download/v0.32/MPX-Meter-0.32-Standalone-Windows-x64.zip) · cerca de 67 MB |
-| **Minimal** | Requer .NET 8 Desktop Runtime x64 instalado | [MPX-Meter-0.32-Minimal-Windows-x64.zip](https://github.com/ypselon/MPX-Meter/releases/download/v0.32/MPX-Meter-0.32-Minimal-Windows-x64.zip) |
+| **Standalone** | **Não é necessário instalar .NET**; runtime incluído | [MPX-Meter-0.34-Standalone-Windows-x64.zip](https://github.com/ypselon/MPX-Meter/releases/download/v0.34/MPX-Meter-0.34-Standalone-Windows-x64.zip) · cerca de 67 MB |
+| **Minimal** | Requer .NET 8 Desktop Runtime x64 instalado | [MPX-Meter-0.34-Minimal-Windows-x64.zip](https://github.com/ypselon/MPX-Meter/releases/download/v0.34/MPX-Meter-0.34-Minimal-Windows-x64.zip) |
 
-**Standalone:** extrair para uma pasta e abrir **MPX-Meter-Teste.exe** (nome mantido da compilação testada). Manter juntos o EXE, `rtlsdr.dll` e `LICENSE`. O runtime está incluído no EXE; algumas bibliotecas são extraídas automaticamente para a pasta temporária do Windows no primeiro arranque.
+**Standalone:** extrair para uma pasta e abrir **MPX-Meter.exe**. Manter juntos o EXE, `rtlsdr.dll` e `LICENSE`. O runtime está incluído no EXE; algumas bibliotecas são extraídas automaticamente para a pasta temporária do Windows no primeiro arranque.
 
 **A RTL-SDR e o controlador WinUSB, preparado com Zadig, continuam necessários para receção real nas duas versões.** Standalone não significa ausência de controlador USB.
 
@@ -184,7 +184,7 @@ Extrair o ZIP para uma pasta onde o utilizador tenha permissões de escrita. **N
 
 ### Standalone — três ficheiros
 
-Manter **MPX-Meter-Teste.exe**, **rtlsdr.dll** e **LICENSE** na mesma pasta e abrir **MPX-Meter-Teste.exe**. O ficheiro settings.xml é criado na utilização. Esta versão não necessita de .NET instalado. Não misturar ficheiros de distribuições diferentes.
+Manter **MPX-Meter.exe**, **rtlsdr.dll** e **LICENSE** na mesma pasta e abrir **MPX-Meter.exe**. O ficheiro settings.xml é criado na utilização. Esta versão não necessita de .NET instalado. Não misturar ficheiros de distribuições diferentes.
 
 ### Minimal — cinco ficheiros
 
@@ -231,7 +231,7 @@ O sinal sintético inclui FM estéreo e RDS de teste: PI **8201**, PS **MPX DEMO
 - Para mudar fonte, dispositivo, PPM ou filtro, parar primeiro a receção.
 - O indicador superior identifica o estado, sem repetir a frequência.
 
-A sintonia RF fica indisponível em Demonstração.
+A sintonia RF fica indisponível em Demonstração e durante a reprodução WAV MPX.
 
 ## Painel Recetor RDS
 
@@ -247,7 +247,7 @@ O quadro principal apresenta o nome da estação, RadioText e os dados essenciai
 | **Música/Fala** | Sinalização M/S enviada pela estação |
 | **CT** | Data, hora e informação de desfasamento horário recebidas por RDS |
 
-A vista **RDS** disponibiliza ainda AF, DI, ECC, idioma, EON, identificação de aplicações ODA e dados RT+ suportados, quando presentes na emissão. Inclui estado de sincronismo, contagem de grupos e erros CRC. Os detalhes podem ser copiados por Ctrl+C ou pelo menu de contexto.
+A subtab **Análise FM → RDS · Dados e qualidade** disponibiliza ainda AF, DI, ECC, idioma, EON, identificação de aplicações ODA e dados RT+ suportados, quando presentes na emissão. Inclui estado de sincronismo, contagem de grupos e erros CRC. Os detalhes podem ser copiados com o botão **Copiar dados RDS**.
 
 A informação depende do que a estação transmite e da qualidade da receção. Campos vazios ou parciais não significam necessariamente avaria. PS e RT podem precisar de vários grupos válidos para completar o texto.
 
@@ -334,7 +334,7 @@ No rodapé:
 
 | Situação | Verificar |
 | --- | --- |
-| A aplicação não abre ou pede .NET | Extrair todo o ZIP. **Minimal:** instalar .NET 8 Desktop Runtime x64. **Standalone:** confirmar que abriu MPX-Meter-Teste.exe do pacote Standalone |
+| A aplicação não abre ou pede .NET | Extrair todo o ZIP. **Minimal:** instalar .NET 8 Desktop Runtime x64. **Standalone:** confirmar que abriu MPX-Meter.exe do pacote Standalone |
 | RTL-SDR não aparece | Ligação USB, seleção do dispositivo, WinUSB na Interface 0 e **Procurar USB** |
 | USB ocupado / erro ao iniciar | Fechar outros programas SDR que utilizem o recetor |
 | Sinal fraco ou ruidoso | Antena, cabo, frequência e ganho/AGC; ganho máximo nem sempre dá a melhor receção |
@@ -354,7 +354,7 @@ A identificação **Yps Broadcast** não constitui assinatura digital Authentico
 
 # English — MPX Meter · Yps Broadcast
 
-**FM broadcast monitoring and analysis with RTL-SDR**
+**FM broadcast monitoring and analysis with RTL-SDR · v0.34**
 
 MPX Meter combines FM reception, composite MPX signal analysis, RDS decoding, stereo listening and measurement logging in a Windows application. It displays modulation, MPX power, the stereo pilot, the RDS band and RF/MPX spectra.
 
@@ -366,7 +366,7 @@ The application runs locally without GNU Radio, Radioconda or Python. It is dist
 
 Version 0.34 combines the features developed during the v0.33 testing stage and subsequent work. This section describes implemented features rather than a future roadmap.
 
-**Availability:** v0.34 has been prepared and tested locally. Public packages in the Download section remain v0.32 until the new release is published.
+**Availability:** v0.34 is published as **Standalone** and **Minimal** packages. The Download section links to the new release.
 
 ### Interface and navigation
 
@@ -432,9 +432,9 @@ Version 0.34 combines the features developed during the v0.33 testing stage and 
 
 **Local validation:** 866 automatic checks, PT/EN interface review and recording/MPX playback checks on both executables. True Peak and LRA were tested with synthetic recreations of the specified signals; the complete original EBU test set was not tested.
 
-## Public v0.32 screenshots and manual
+## v0.32 reference screenshots and user guide
 
-The following images and instructions accompany the public v0.32 distribution. The v0.34 layout and additions are described above.
+The following images show v0.32. The user guide has been updated for v0.34; its new layout and additional features are described above.
 
 
 Screenshots of **v0.32 in Demo mode**, generated by the application itself. Station data and readings shown come from a synthetic test signal, not an over-the-air broadcast. The same panels are available in both Standalone and Minimal versions. These captures show the Portuguese interface; English (International) can be selected in Settings.
@@ -474,14 +474,14 @@ Source, USB, audio output, gain/AGC, PPM, RF filter, MPX graph, language and aut
 
 ## Download
 
-Open [Release v0.32](https://github.com/ypselon/MPX-Meter/releases/tag/v0.32) and choose:
+Open [Release v0.34](https://github.com/ypselon/MPX-Meter/releases/tag/v0.34) and choose:
 
 | Version | .NET on the computer | Package |
 | --- | --- | --- |
-| **Standalone** | **No .NET installation required**; runtime included | [MPX-Meter-0.32-Standalone-Windows-x64.zip](https://github.com/ypselon/MPX-Meter/releases/download/v0.32/MPX-Meter-0.32-Standalone-Windows-x64.zip) · approximately 67 MB |
-| **Minimal** | Requires an installed .NET 8 Desktop Runtime x64 | [MPX-Meter-0.32-Minimal-Windows-x64.zip](https://github.com/ypselon/MPX-Meter/releases/download/v0.32/MPX-Meter-0.32-Minimal-Windows-x64.zip) |
+| **Standalone** | **No .NET installation required**; runtime included | [MPX-Meter-0.34-Standalone-Windows-x64.zip](https://github.com/ypselon/MPX-Meter/releases/download/v0.34/MPX-Meter-0.34-Standalone-Windows-x64.zip) · approximately 67 MB |
+| **Minimal** | Requires an installed .NET 8 Desktop Runtime x64 | [MPX-Meter-0.34-Minimal-Windows-x64.zip](https://github.com/ypselon/MPX-Meter/releases/download/v0.34/MPX-Meter-0.34-Minimal-Windows-x64.zip) |
 
-**Standalone:** extract to a folder and open **MPX-Meter-Teste.exe** (the name of the tested build is retained). Keep the EXE, `rtlsdr.dll` and `LICENSE` together. The runtime is included in the EXE; some libraries are automatically extracted to the Windows temporary folder on first launch.
+**Standalone:** extract to a folder and open **MPX-Meter.exe**. Keep the EXE, `rtlsdr.dll` and `LICENSE` together. The runtime is included in the EXE; some libraries are automatically extracted to the Windows temporary folder on first launch.
 
 **Both versions still require an RTL-SDR and the WinUSB driver, prepared using Zadig, for actual reception.** Standalone does not remove the USB driver requirement.
 
@@ -538,7 +538,7 @@ Extract the ZIP to a folder where your user account has write permission. **Do n
 
 ### Standalone — three files
 
-Keep **MPX-Meter-Teste.exe**, **rtlsdr.dll** and **LICENSE** in the same folder and open **MPX-Meter-Teste.exe**. The settings.xml file is created during use. This version requires no .NET installation. Do not mix files from different distributions.
+Keep **MPX-Meter.exe**, **rtlsdr.dll** and **LICENSE** in the same folder and open **MPX-Meter.exe**. The settings.xml file is created during use. This version requires no .NET installation. Do not mix files from different distributions.
 
 ### Minimal — five files
 
@@ -585,7 +585,7 @@ The synthetic signal includes stereo FM and test RDS: PI **8201**, PS **MPX DEMO
 - Stop reception before changing the source, device, PPM correction or filter.
 - The header indicator shows reception status without repeating the frequency.
 
-RF tuning is unavailable in Demo mode.
+RF tuning is unavailable in Demo mode and during MPX WAV playback.
 
 ## Receiver RDS panel
 
@@ -601,7 +601,7 @@ The main panel shows the station name, RadioText and essential identification an
 | **Music/Speech** | M/S signalling transmitted by the station |
 | **CT** | Date, time and local time offset information received through RDS |
 
-The **RDS** view also provides AF, DI, ECC, language, EON, ODA application identification and supported RT+ data when present in the broadcast. It includes synchronisation status, group counts and CRC errors. Details can be copied with Ctrl+C or the context menu.
+The **FM Analysis → RDS · Data and quality** subtab also provides AF, DI, ECC, language, EON, ODA application identification and supported RT+ data when present in the broadcast. It includes synchronisation status, group counts and CRC errors. Use **Copy RDS data** to copy the decoded details.
 
 Available information depends on the station's transmission and reception quality. Empty or partial fields do not necessarily indicate a fault. PS and RT may require several valid groups to complete the text.
 
@@ -688,7 +688,7 @@ The footer displays:
 
 | Situation | What to check |
 | --- | --- |
-| Application does not open or requests .NET | Extract the entire ZIP. **Minimal:** install .NET 8 Desktop Runtime x64. **Standalone:** ensure you opened MPX-Meter-Teste.exe from the Standalone package |
+| Application does not open or requests .NET | Extract the entire ZIP. **Minimal:** install .NET 8 Desktop Runtime x64. **Standalone:** ensure you opened MPX-Meter.exe from the Standalone package |
 | RTL-SDR is not listed | USB connection, device selection, WinUSB on Interface 0 and **Find USB** |
 | USB busy / error when starting | Close other SDR programs using the receiver |
 | Weak or noisy signal | Antenna, cable, frequency and gain/AGC; maximum gain does not always give the best reception |
