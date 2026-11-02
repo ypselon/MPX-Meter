@@ -8,7 +8,80 @@ A aplicação funciona localmente, sem GNU Radio, Radioconda ou Python. A distri
 
 > Versão de monitorização em desenvolvimento. Os cálculos foram ensaiados com sinais sintéticos; a precisão em receção física ainda requer validação. As leituras não substituem um analisador de modulação calibrado.
 
-## Imagens da aplicação
+## Novidades entre a v0.32 e a v0.34
+
+A v0.34 reúne as funções desenvolvidas durante a etapa de testes v0.33 e a evolução posterior. O descritivo seguinte corresponde a funções já implementadas, não a uma lista de funcionalidades futuras.
+
+**Disponibilidade:** a v0.34 está preparada e validada localmente. Os pacotes públicos na secção Descarregar continuam a ser os da v0.32 até à publicação da nova release.
+
+### Interface e organização
+
+- Quatro áreas principais: **Monitorização**, **Análise FM**, **Áudio · Gravação / Leitor** e **Alarmística**.
+- A Análise FM reúne **Componentes MPX**, **Distribuição de modulação**, **Estéreo / Áudio**, **Loudness · LUFS**, **RDS · Dados e qualidade** e **Histórico de medições**.
+- Indicador único **MONO/ESTÉREO** junto à frequência, baseado no sincronismo do piloto de 19 kHz. Fica sem leitura ativa ao parar, pausar ou deixar de receber amostras.
+- Organização mais compacta dos dados RDS, RadioText com altura limitada e dados avançados na própria página.
+
+### Modulação e componentes MPX
+
+- Quatro espectros simultâneos, com larguras adaptadas à banda observada: **mono L+R (0–16 kHz)**, **estéreo L−R modulado (22–54 kHz)**, **piloto (18,5–19,5 kHz)** e **RDS (53–61 kHz)**.
+- Medições RMS das componentes e análise da frequência do piloto, incluindo desvio face a 19 kHz, mínimo, máximo e dispersão numa janela de até 10 segundos.
+- Distribuição estatística das amostras MPX em janelas de **1, 10 e 60 segundos**, com limiar ajustável e percentagens acima dos limites positivo, negativo e combinado.
+- **Pico MPX retido**, com marca e leitura em kHz e percentagem. Duplo clique repõe os máximos sem reiniciar a janela de potência MPX.
+
+### Estéreo, áudio e DE-MOD
+
+- **Correlação L/R**, equilíbrio entre canais e medições RMS/pico das componentes **M=(L+R)/2** e **S=(L−R)/2**.
+- **Goniómetro estéreo**, com escala automática ou manual, e espectros de áudio **L/R ou M/S**, com cursor de leitura e retenção FFT.
+- Escuta seletiva **L/R, só L, só R, mono M ou diferença S**, sem alterar as medições ou a gravação.
+- Novas leituras **DE-MOD L e R em %**: picos estimados de cada bloco de 100 ms, antes da desacentuação de 50 µs, com referência **100% = 75 kHz por canal**.
+
+### Loudness, True Peak e LRA
+
+- Loudness **momentânea M (400 ms)**, **curta S (3 s)** e **integrada I**, em LUFS, com máximo de M e tempo de medição.
+- Gráficos M/S e I, histórico de até **10 minutos**, janelas de **30/120/600 segundos** e escala vertical ajustável.
+- **True Peak L/R em dBTP**, com pico de cada bloco de 100 ms e máximo retido desde a última reposição, usando interpolação 4× a 192 kHz.
+- **Loudness Range — LRA em LU**, com percentis P10/P95 e indicação provisória nos primeiros **60 segundos**. Aguarda janelas completas de 3 segundos e áudio elegível.
+- Botão **Repor LUFS / TP / LRA**, sem reiniciar a aquisição nem a potência MPX. Estas medições usam o áudio após 50 µs e antes do volume de escuta.
+
+### Gravação WAV e leitor MPX
+
+- Gravação **WAV Áudio L/R**, estéreo PCM a **48 kHz/16 bits**.
+- Gravação **WAV MPX completo**, mono float a **384 kHz/32 bits**, antes da descodificação estéreo, preservando áudio, piloto e RDS.
+- Gravação independente de Ouvir/Silenciar e do volume, com estado REC, duração e indicação do ficheiro.
+- **Leitor dos WAV MPX gravados pela aplicação**, com abrir, reproduzir, pausar, continuar, parar e mudar de posição.
+- Nova análise MPX/RDS/áudio durante a reprodução, incluindo DE-MOD, LUFS, True Peak e LRA, sem necessidade de RTL-SDR ligada.
+- Durante a reprodução, os valores RF/IQ não são apresentados como se existisse uma receção USB. Mudar de posição reinicia a análise correspondente.
+
+### RDS: dados e qualidade
+
+- Dados normais e avançados reunidos numa única subtab da Análise FM, incluindo identificação, texto, sinalização, RT+, EON, ODA, grupos/CRC e último grupo bruto.
+- **BLER observado em 10 segundos**, cobertura dos blocos observados, perdas de sincronismo e tempos da primeira aquisição de PI, PS e RadioText.
+- Cópia dos dados RDS, com texto recebido preservado na mudança de língua. O BLER é um indicador de blocos observados; não é BER.
+
+### Alarmística
+
+- Área dedicada a ocorrências, reconhecimento, perfil de alarmes e estatísticas.
+- **11 regras configuráveis:** desvio MPX, potência MPX de 60 s, saturação I/Q, silêncio, perda de um canal, correlação negativa, ausência de piloto, ausência de RDS, BLER RDS, loudness S e pico de amostra de áudio.
+- Limiares, ativação e tempos de confirmação ajustáveis; perfil guardado no ficheiro de configuração.
+- Indicação visual e contagem de alarmes ativos, reconhecimento de ocorrências e registo de alterações de PI como informação.
+- Exportação de **ocorrências em CSV** e **relatório HTML** com estatísticas, perfil e ocorrências da sessão.
+
+### Histórico, exportações e receção
+
+- **Histórico de medições**, na Análise FM, com até 10 minutos de potência MPX, pico, RMS L/R, correlação, loudness S e piloto; janelas de 30/60/120/600 segundos.
+- Estatísticas de mínimo, média, máximo e tempo válido para as grandezas acompanhadas durante a sessão.
+- Exportação do histórico em CSV e ampliação do CSV de medições com análise FM/RDS, DE-MOD, True Peak e LRA.
+- Correção da ordem de configuração do ganho e dos AGCs após a sintonia, para evitar a perda dessas definições numa reinicialização do sintonizador.
+- Os dados de sessão são mantidos em memória; devem ser exportados quando for necessário conservá-los depois de fechar ou reiniciar a aquisição.
+
+**Distribuição da v0.34:** pacotes **Standalone** e **Minimal**, ambos com `MPX-Meter.exe`. A Standalone inclui o .NET; a Minimal requer .NET 8 Desktop Runtime x64. Mantêm-se RTL-SDR/WinUSB para receção real, português de Portugal e inglês internacional. Os pacotes de distribuição não incluem o código-fonte da aplicação nem configurações pessoais.
+
+**Validação local:** 866 verificações automáticas, revisão da interface PT/EN e ensaios dos dois executáveis com gravação/reprodução MPX. True Peak e LRA foram ensaiados com reproduções sintéticas dos sinais descritos nas normas; o conjunto original completo da EBU não foi ensaiado.
+
+## Imagens e manual da versão pública v0.32
+
+As imagens e instruções seguintes acompanham a distribuição pública v0.32. A organização e as funções acrescentadas na v0.34 estão descritas acima.
+
 
 Capturas da **v0.32 em modo Demonstração**, geradas pela própria aplicação. Os dados de estação e as medições mostrados são de um sinal sintético de teste, não de uma emissão recebida por antena. Os mesmos painéis estão disponíveis nas versões Standalone e Minimal.
 
@@ -289,7 +362,80 @@ The application runs locally without GNU Radio, Radioconda or Python. It is dist
 
 > This monitoring application is under development. Calculations have been tested with synthetic signals; accuracy during hardware reception still requires validation. Readings do not replace a calibrated modulation analyser.
 
-## Application screenshots
+## Changes from v0.32 to v0.34
+
+Version 0.34 combines the features developed during the v0.33 testing stage and subsequent work. This section describes implemented features rather than a future roadmap.
+
+**Availability:** v0.34 has been prepared and tested locally. Public packages in the Download section remain v0.32 until the new release is published.
+
+### Interface and navigation
+
+- Four main areas: **Monitoring**, **FM Analysis**, **Audio · Recording / Player** and **Alarms**.
+- FM Analysis contains **MPX components**, **Modulation distribution**, **Stereo / Audio**, **Loudness · LUFS**, **RDS · Data and quality** and **Measurement history**.
+- A single **MONO/STEREO** indicator beside the frequency follows 19 kHz pilot lock. It has no active reading while stopped, paused or receiving no new samples.
+- More compact RDS presentation, bounded RadioText height and inline advanced data.
+
+### Modulation and MPX components
+
+- Four simultaneous spectra with widths adapted to their displayed bands: **mono L+R (0–16 kHz)**, **modulated stereo L−R (22–54 kHz)**, **pilot (18.5–19.5 kHz)** and **RDS (53–61 kHz)**.
+- Component RMS measurements and pilot frequency analysis, including offset from 19 kHz, minimum, maximum and spread over up to 10 seconds.
+- Statistical MPX sample distribution over **1, 10 and 60 seconds**, with an adjustable threshold and positive, negative and combined exceedance percentages.
+- **Held MPX peak**, with a marker and kHz/percentage reading. Double-click resets the held maxima while keeping the MPX power window.
+
+### Stereo, audio and DE-MOD
+
+- **L/R correlation**, channel balance and RMS/sample-peak measurements for **M=(L+R)/2** and **S=(L−R)/2**.
+- **Stereo goniometer** with automatic/manual scale and **L/R or M/S** audio spectra, a measurement cursor and FFT peak hold.
+- Selective listening to **L/R, L only, R only, mono M or difference S**, independently of measurements and recording.
+- **DE-MOD L and R percentages:** estimated peaks for each 100 ms block before 50 µs de-emphasis, with **100% = 75 kHz per channel**.
+
+### Loudness, True Peak and LRA
+
+- **Momentary M (400 ms)**, **Short-term S (3 s)** and **Integrated I** loudness in LUFS, with maximum M and measurement duration.
+- M/S and I plots, up to **10 minutes** of history, **30/120/600-second** windows and adjustable display floors.
+- **L/R True Peak in dBTP**, current 100 ms peaks and held maxima since reset, using 4× interpolation to 192 kHz.
+- **Loudness Range — LRA in LU**, P10/P95 percentiles and a provisional indication during the first **60 seconds**. It waits for complete 3-second windows and eligible audio.
+- **Reset LUFS / TP / LRA** keeps acquisition and MPX power running. These measurements use audio after 50 µs and before listening volume.
+
+### WAV recording and MPX player
+
+- **L/R audio WAV recording**, stereo PCM at **48 kHz/16 bit**.
+- **Full composite MPX WAV recording**, mono float at **384 kHz/32 bit**, before stereo decoding, preserving audio, pilot and RDS.
+- Recording independent of Listen/Mute and volume, with REC status, duration and file indication.
+- **Player for the application's recorded MPX WAV files**, with open, play, pause, resume, stop and seeking.
+- MPX/RDS/audio reanalysis during playback, including DE-MOD, LUFS, True Peak and LRA, without a connected RTL-SDR.
+- RF/IQ values are unavailable during file playback. Seeking resets the corresponding analysis.
+
+### RDS data and quality
+
+- Standard and advanced data in a single FM Analysis subtab: identification, text, signalling, RT+, EON, ODA, group/CRC counts and the last raw group.
+- **Observed 10-second BLER**, observation coverage, synchronization losses and first acquisition times for PI, PS and RadioText.
+- Copy RDS data while preserving received text across language changes. Observed block error rate is not BER.
+
+### Alarms
+
+- Dedicated events, acknowledgement, alarm profile and statistics area.
+- **11 configurable rules:** MPX deviation, 60-second MPX power, I/Q clipping, silence, one-channel loss, negative correlation, pilot loss, RDS loss, RDS BLER, short-term loudness and audio sample peak.
+- Adjustable thresholds, enabled states and confirmation times; the profile is saved with settings.
+- Visual active-alarm indication/count, acknowledgement and informational PI-change events.
+- **Event CSV** and **HTML reports** containing session statistics, the profile and retained events.
+
+### History, exports and reception
+
+- **Measurement history** under FM Analysis, with up to 10 minutes of MPX power, peak, L/R RMS, correlation, short-term loudness and pilot; 30/60/120/600-second windows.
+- Session minimum, average, maximum and valid-time statistics for monitored quantities.
+- History CSV export and additional measurement CSV fields for FM/RDS analysis, DE-MOD, True Peak and LRA.
+- Corrected gain/AGC configuration order after tuning so tuner reinitialization does not discard those settings.
+- Session data is kept in memory; export it to retain it after closing or restarting acquisition.
+
+**v0.34 distribution:** **Standalone** and **Minimal** packages, both launched through `MPX-Meter.exe`. Standalone includes .NET; Minimal requires .NET 8 Desktop Runtime x64. RTL-SDR/WinUSB remain necessary for live reception. Portuguese (Portugal) and English (International) remain available. Distribution packages contain no application source code or personal settings.
+
+**Local validation:** 866 automatic checks, PT/EN interface review and recording/MPX playback checks on both executables. True Peak and LRA were tested with synthetic recreations of the specified signals; the complete original EBU test set was not tested.
+
+## Public v0.32 screenshots and manual
+
+The following images and instructions accompany the public v0.32 distribution. The v0.34 layout and additions are described above.
+
 
 Screenshots of **v0.32 in Demo mode**, generated by the application itself. Station data and readings shown come from a synthetic test signal, not an over-the-air broadcast. The same panels are available in both Standalone and Minimal versions. These captures show the Portuguese interface; English (International) can be selected in Settings.
 
